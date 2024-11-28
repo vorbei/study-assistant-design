@@ -31,6 +31,7 @@ interface StudyChat {
 interface ChatListItemProps {
   chat: StudyChat;
   onClick: () => void;
+  onDelete: () => void;
 }
 
 interface StudyAssistantModuleProps {
@@ -58,7 +59,7 @@ export const StudyAssistantModule: React.FC<StudyAssistantModuleProps> = ({
     }
   ]
 }) => {
-  const [activeChat, setActiveChat] = useState(initialChats[0]);
+  const [activeChat, setActiveChat] = useState<StudyChat | null>(initialChats[0] || null);
   const [input, setInput] = useState('');
   const [currentPdfUrl] = useState(testPdf);
   const [isListCollapsed, setIsListCollapsed] = useState(true);
@@ -66,6 +67,16 @@ export const StudyAssistantModule: React.FC<StudyAssistantModuleProps> = ({
 
   const handleChatClick = (chat: StudyChat) => {
     setActiveChat(chat);
+  };
+
+  const handleDeleteChat = (chatId: string) => {
+    const updatedChats = initialChats.filter(chat => chat.id !== chatId);
+    if (activeChat?.id === chatId) {
+      setActiveChat(updatedChats[0] || null);
+    }
+    toast({
+      description: "对话已删除",
+    });
   };
 
   const handleResend = (content: string) => {
@@ -190,12 +201,10 @@ export const StudyAssistantModule: React.FC<StudyAssistantModuleProps> = ({
                       key={chat.id}
                       chat={{
                         ...chat,
-                        isActive: chat.id === activeChat.id
+                        isActive: activeChat ? chat.id === activeChat.id : false
                       }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleChatClick(chat);
-                      }}
+                      onClick={() => handleChatClick(chat)}
+                      onDelete={() => handleDeleteChat(chat.id)}
                     />
                   ))}
                 </div>
@@ -213,7 +222,7 @@ export const StudyAssistantModule: React.FC<StudyAssistantModuleProps> = ({
                   <span className="text-white text-sm">学习</span>
                 </Avatar>
                 <div>
-                  <h3 className="font-medium">{activeChat.title}</h3>
+                  <h3 className="font-medium">{activeChat?.title}</h3>
                   <Badge variant="secondary" className="mt-1">自学助手</Badge>
                 </div>
                 <div className="flex items-center gap-2 ml-auto">
@@ -247,38 +256,46 @@ export const StudyAssistantModule: React.FC<StudyAssistantModuleProps> = ({
               </div>
               {/* 消息列表 */}
               <div className="flex-1 overflow-y-auto min-h-0">
-                <div className="p-4 space-y-4">
-                  {activeChat.messages.map((message) => (
-                    <ChatMessage
-                      key={message.id}
-                      content={message.content}
-                      time={message.timestamp}
-                      role={message.isUser ? 'user' : 'assistant'}
-                      align={message.isUser ? 'right' : 'left'}
-                      onResend={() => handleResend(message.content)}
-                    />
-                  ))}
-                </div>
+                {activeChat ? (
+                  <div className="p-4 space-y-4">
+                    {activeChat.messages.map((message) => (
+                      <ChatMessage
+                        key={message.id}
+                        content={message.content}
+                        time={message.timestamp}
+                        role={message.isUser ? 'user' : 'assistant'}
+                        align={message.isUser ? 'right' : 'left'}
+                        onResend={() => handleResend(message.content)}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex-1 flex items-center justify-center text-neutral-3">
+                    选择或创建一个对话开始
+                  </div>
+                )}
               </div>
               {/* 输入框区域 */}
-              <div className="p-4 border-t shrink-0">
-                <div className="flex gap-2">
-                  <div className="flex-1 relative">
-                    <Input
-                      value={input}
-                      onChange={(e) => setInput(e.target.value)}
-                      placeholder="输入你的问题..."
-                      className="pr-12"
-                    />
-                    <Button 
-                      size="sm"
-                      className="absolute right-1 top-1/2 transform -translate-y-1/2 px-2 h-7"
-                    >
-                      <Send className="h-4 w-4" />
-                    </Button>
+              {activeChat && (
+                <div className="p-4 border-t shrink-0">
+                  <div className="flex gap-2">
+                    <div className="flex-1 relative">
+                      <Input
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        placeholder="输入你的问题..."
+                        className="pr-12"
+                      />
+                      <Button 
+                        size="sm"
+                        className="absolute right-1 top-1/2 transform -translate-y-1/2 px-2 h-7"
+                      >
+                        <Send className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </Card>
