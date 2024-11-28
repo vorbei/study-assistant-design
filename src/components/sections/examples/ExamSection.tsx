@@ -181,7 +181,7 @@ export const ExamSection = () => {
                 />
                 <Button 
                   size="sm"
-                  className="absolute right-1 top-1/2 transform -translate-y-1/2 px-2 h-7 bg-purple-500 hover:bg-purple-600"
+                  className="absolute right-1 top-1/2 transform -translate-y-1/2 px-2 h-7"
                 >
                   <Send className="h-4 w-4" />
                 </Button>
