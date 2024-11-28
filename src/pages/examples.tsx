@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Sidebar } from "@/components/layout/Sidebar";
 import { LoginSection } from "@/components/sections/examples/LoginSection";
 import { ExamSection } from "@/components/sections/examples/ExamSection";
+import { StudyAssistantSection } from "@/components/sections/examples/StudyAssistantSection";
 
 const sections = [
   {
@@ -15,6 +16,12 @@ const sections = [
     name: "模拟考试",
     href: "#examples/exam",
     description: "展示模拟考试界面"
+  },
+  {
+    id: "study",
+    name: "自学助手",
+    href: "#examples/study",
+    description: "展示自学助手界面，帮助你更好地学习和记录学习过程"
   }
 ];
 
@@ -73,6 +80,13 @@ export const ExamplesPage = () => {
                 <h2 className="text-lg font-medium mb-2">模拟考试</h2>
                 <p className="text-sm text-neutral-11 mb-6">{sections[1].description}</p>
                 <ExamSection />
+              </div>
+            )}
+            {activeSection === 'study' && (
+              <div className="rounded-lg p-6">
+                <h2 className="text-lg font-medium mb-2">自学助手</h2>
+                <p className="text-sm text-neutral-11 mb-6">{sections[2].description}</p>
+                <StudyAssistantSection />
               </div>
             )}
           </div>
