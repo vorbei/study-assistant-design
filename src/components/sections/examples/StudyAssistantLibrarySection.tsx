@@ -2,12 +2,10 @@ import React, { useState, useCallback } from 'react';
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Upload, Trash2, X, FileText, BookOpen, PenTool } from "lucide-react";
+import { Upload, X, Trash2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { useDropzone } from 'react-dropzone';
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
-import { ExamSection } from './ExamSection';
 
 interface Task {
   id: string;
@@ -16,7 +14,7 @@ interface Task {
   file?: File;
 }
 
-export const LearningAssistantSection = () => {
+export const StudyAssistantLibrarySection = () => {
   const [taskName, setTaskName] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -26,7 +24,7 @@ export const LearningAssistantSection = () => {
       const file = acceptedFiles[0];
       setSelectedFile(file);
       if (!taskName) {
-        setTaskName(file.name.replace(/\.[^/.]+$/, "")); // 移除文件扩展名
+        setTaskName(file.name.replace(/\.[^/.]+$/, ""));
       }
       toast.success(`已选择文件: ${file.name}`);
     }
@@ -92,63 +90,43 @@ export const LearningAssistantSection = () => {
   };
 
   return (
-    <Tabs defaultValue="exam" className="space-y-4">
-      {/* Navigation Bar */}
-      <Card className="p-4 max-w-[1200px] mx-auto">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="text-blue-600 text-2xl">✦</div>
-            <span className="font-medium text-xl">医学基础知识</span>
-          </div>
-          
-          <TabsList className="grid w-[400px] grid-cols-2">
-            <TabsTrigger value="learning" className="gap-2">
-              <BookOpen className="w-4 h-4" />
-              自学助手
-            </TabsTrigger>
-            <TabsTrigger value="exam" className="gap-2">
-              <PenTool className="w-4 h-4" />
-              模拟考核
-            </TabsTrigger>
-          </TabsList>
-
-          <div className="w-[120px]">
-            {/* Placeholder for balance */}
-          </div>
+    <div className="min-h-screen bg-neutral-50/50 p-8">
+      {/* Header */}
+      <div className="max-w-[1200px] mx-auto flex items-center mb-8">
+        <div className="flex items-center gap-2">
+          <div className="text-blue-600 text-2xl">✦</div>
+          <span className="font-medium">智能学习助手</span>
         </div>
-      </Card>
+      </div>
 
       {/* Main Content */}
-      <Card className="p-8 max-w-[1200px] mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-2">
-            <div className="text-blue-600 text-2xl">✦</div>
-            <span className="text-blue-600 font-medium">智能学习助手</span>
-          </div>
-          
-          {/* Search Input with File Drop */}
-          <div className="max-w-xl">
+      <Card className="max-w-[1200px] mx-auto p-16 min-h-[800px]">
+        <div className="grid grid-cols-[1fr,1fr] gap-16">
+          {/* Left Content */}
+          <div className="flex flex-col justify-start">
+            <h1 className="text-4xl font-medium text-blue-600 mb-12">
+              欢迎来到智能学习助手！
+            </h1>
             <div 
               {...getRootProps()}
-              className="relative"
+              className="relative mb-8"
             >
               <input {...getInputProps()} />
               <div className={cn(
                 "absolute inset-0 rounded-lg border-2 border-dashed pointer-events-none transition-colors",
                 isDragActive ? "border-blue-600 bg-blue-50/50" : "border-transparent"
               )} />
-              <div className="relative flex items-center">
+              <div className="relative">
                 <Input
                   value={taskName}
                   onChange={(e) => setTaskName(e.target.value)}
                   placeholder="输入学习任务名称，或拖入文件以创建任务"
                   className={cn(
-                    "pr-24 h-12",
+                    "h-12 pr-24",
                     isDragActive ? "bg-blue-50/50" : "bg-neutral-7/50"
                   )}
                 />
-                <div className="absolute right-1 flex gap-2">
+                <div className="absolute right-1 top-1/2 -translate-y-1/2 flex gap-2">
                   <Button
                     variant="ghost"
                     size="icon"
@@ -163,7 +141,7 @@ export const LearningAssistantSection = () => {
                         if (file) {
                           setSelectedFile(file);
                           if (!taskName) {
-                            setTaskName(file.name.replace(/\.[^/.]+$/, "")); // 移除文件扩展名
+                            setTaskName(file.name.replace(/\.[^/.]+$/, ""));
                           }
                           toast.success(`已选择文件: ${file.name}`);
                         }
@@ -174,7 +152,7 @@ export const LearningAssistantSection = () => {
                     <Upload className="h-4 w-4 text-neutral-3" />
                   </Button>
                   <Button 
-                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                    className="bg-blue-600 hover:bg-blue-700"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleCreateTask();
@@ -217,36 +195,70 @@ export const LearningAssistantSection = () => {
                 </div>
               )}
             </div>
+
+            {/* Task List */}
+            {tasks.length > 0 ? (
+              <div className="grid grid-cols-3 gap-4">
+                {tasks.map(task => (
+                  <div 
+                    key={task.id} 
+                    className="aspect-square p-4 bg-gradient-to-br from-blue-100 to-blue-50 rounded-2xl relative group"
+                  >
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="absolute top-3 right-3 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white/50 hover:text-red-500"
+                      onClick={() => handleDeleteTask(task.id)}
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                    <div className="flex flex-col h-full">
+                      <div className="text-xl mb-2">
+                        {task.file ? getFileIcon(task.file.name) : '📝'}
+                      </div>
+                      <div className="flex-grow">
+                        <div className="text-sm font-medium text-neutral-1 mb-1 line-clamp-2">
+                          {task.title}
+                        </div>
+                      </div>
+                      <div className="text-xs text-neutral-3">
+                        {new Intl.DateTimeFormat('zh-CN', {
+                          year: 'numeric',
+                          month: '2-digit',
+                          day: '2-digit'
+                        }).format(task.createdAt)}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center text-neutral-3 py-8">
+                还没有任务，创建一个新任务开始学习吧！
+              </div>
+            )}
+          </div>
+
+          {/* Right Illustration */}
+          <div className="relative">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px]">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
+                <span className="text-white text-2xl">🤖</span>
+              </div>
+              <div className="absolute top-1/4 right-0 max-w-[200px] p-4 bg-blue-600 text-white rounded-lg">
+                你好！我是你的学习助手
+              </div>
+              <div className="absolute bottom-1/4 left-0 max-w-[200px] p-4 bg-pink-500 text-white rounded-lg">
+                让我们开始学习吧！
+              </div>
+              <div className="absolute bottom-0 right-1/2 translate-x-1/2 w-16 h-16 bg-pink-500 rounded-full flex items-center justify-center">
+                <span className="text-white text-2xl">👩‍🎓</span>
+              </div>
+              <div className="absolute inset-0 border-2 border-dashed border-neutral-200 rounded-full animate-spin-slow" />
+            </div>
           </div>
         </div>
-
-        {/* Task List and Content */}
-        {tasks.length > 0 ? (
-          <>
-            <TabsContent value="learning">
-              <div className="text-center text-neutral-3 py-8">
-                自学助手功能开发中...
-              </div>
-            </TabsContent>
-            <TabsContent value="exam">
-              <ExamSection />
-            </TabsContent>
-          </>
-        ) : (
-          <>
-            <TabsContent value="learning">
-              <div className="text-center text-neutral-3 py-8">
-                还没有任务，创建一个新任务开始学习吧！
-              </div>
-            </TabsContent>
-            <TabsContent value="exam">
-              <div className="text-center text-neutral-3 py-8">
-                还没有任务，创建一个新任务开始学习吧！
-              </div>
-            </TabsContent>
-          </>
-        )}
       </Card>
-    </Tabs>
+    </div>
   );
 };

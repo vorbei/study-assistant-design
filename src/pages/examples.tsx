@@ -3,6 +3,7 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { LoginSection } from "@/components/sections/examples/LoginSection";
 import { ExamSection } from "@/components/sections/examples/ExamSection";
 import { StudyAssistantSection } from "@/components/sections/examples/StudyAssistantSection";
+import { StudyAssistantLibrarySection } from "@/components/sections/examples/StudyAssistantLibrarySection";
 
 const sections = [
   {
@@ -10,6 +11,12 @@ const sections = [
     name: "登录界面",
     href: "#examples/login",
     description: "展示各种登录、注册、找回密码等用户认证界面"
+  },
+  {
+    id: "lib",
+    name: "任务库",
+    href: "#examples/lib",
+    description: "欢迎来到智能学习助手"
   },
   {
     id: "exam",
@@ -75,17 +82,24 @@ export const ExamplesPage = () => {
                 <LoginSection />
               </div>
             )}
+            {activeSection === 'lib' && (
+              <div className="rounded-lg p-6">
+                <h2 className="text-lg font-medium mb-2">任务库</h2>
+                <p className="text-sm text-neutral-11 mb-6">{sections[1].description}</p>
+                <StudyAssistantLibrarySection />
+              </div>
+            )}
             {activeSection === 'exam' && (
               <div className="rounded-lg p-6">
                 <h2 className="text-lg font-medium mb-2">模拟考试</h2>
-                <p className="text-sm text-neutral-11 mb-6">{sections[1].description}</p>
+                <p className="text-sm text-neutral-11 mb-6">{sections[2].description}</p>
                 <ExamSection />
               </div>
             )}
             {activeSection === 'study' && (
               <div className="rounded-lg p-6">
                 <h2 className="text-lg font-medium mb-2">自学助手</h2>
-                <p className="text-sm text-neutral-11 mb-6">{sections[2].description}</p>
+                <p className="text-sm text-neutral-11 mb-6">{sections[3].description}</p>
                 <StudyAssistantSection />
               </div>
             )}
