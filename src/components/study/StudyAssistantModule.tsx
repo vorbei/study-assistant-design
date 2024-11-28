@@ -205,7 +205,10 @@ export const StudyAssistantModule: React.FC<StudyAssistantModuleProps> = ({
             {/* 当前对话区域 */}
             <div className="flex flex-col h-full border-l overflow-hidden">
               {/* 头部信息 */}
-              <div className="flex items-center gap-3 p-4 border-b shrink-0">
+              <div className={cn(
+                "flex items-center gap-3 p-4 border-b shrink-0 transition-opacity duration-300",
+                !isListCollapsed ? "opacity-0 pointer-events-none h-0 p-0 border-none" : "opacity-100"
+              )}>
                 <Avatar className="bg-blue-500 w-8 h-8 flex items-center justify-center">
                   <span className="text-white text-sm">学习</span>
                 </Avatar>

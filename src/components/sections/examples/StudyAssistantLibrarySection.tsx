@@ -156,7 +156,7 @@ export const StudyAssistantLibrarySection = () => {
                     <Upload className="h-4 w-4 text-neutral-3" />
                   </Button>
                   <Button 
-                    className="bg-blue-600 hover:bg-blue-700"
+                    className="bg-blue-600 hover:bg-blue-700 h-10 flex items-center"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleCreateTask();
