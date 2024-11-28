@@ -20,8 +20,8 @@ export default {
       none: '0px',
       DEFAULT: '2px',
       sm: '2px',
-      md: '2px',
-      lg: '2px',
+      md: '4px',
+      lg: '8px',
       full: '50%',
     },
     container: {
@@ -48,6 +48,9 @@ export default {
       '2xl': ['24px', '34px'],  // H1
       '3xl': ['30px', '38px'],
       '4xl': ['36px', '44px'],
+      '5xl': ['48px', '56px'],
+      '6xl': ['60px', '72px'],
+      '7xl': ['72px', '84px'],
     },
     extend: {
       colors: {

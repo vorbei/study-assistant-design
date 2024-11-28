@@ -1,32 +1,40 @@
 import React, { useState, useCallback } from 'react';
+import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Upload, X, Trash2 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { useDropzone } from 'react-dropzone';
 import { toast } from "sonner";
+import libImage from '@/assets/lib-image.svg';
 
 interface Task {
   id: string;
   title: string;
   createdAt: Date;
-  file?: File;
+  file: File;
 }
 
 export const StudyAssistantLibrarySection = () => {
   const [taskName, setTaskName] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
+  const [editingTaskName, setEditingTaskName] = useState('');
+
+  const handleFileSelect = (file: File) => {
+    setSelectedFile(file);
+    if (!taskName) {
+      setTaskName(file.name.replace(/\.[^/.]+$/, ""));
+    }
+    // 文件上传后直接创建任务
+    createTask(file);
+    toast.success(`已选择文件: ${file.name}`);
+  };
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
-      const file = acceptedFiles[0];
-      setSelectedFile(file);
-      if (!taskName) {
-        setTaskName(file.name.replace(/\.[^/.]+$/, ""));
-      }
-      toast.success(`已选择文件: ${file.name}`);
+      handleFileSelect(acceptedFiles[0]);
     }
   }, [taskName]);
 
@@ -42,17 +50,25 @@ export const StudyAssistantLibrarySection = () => {
     noClick: true,
   });
 
-  const handleCreateTask = () => {
-    if (!taskName.trim()) {
-      toast.error('请输入任务名称');
-      return;
-    }
+  const triggerFileUpload = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.pdf,.doc,.docx,.txt';
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        handleFileSelect(file);
+      }
+    };
+    input.click();
+  };
 
+  const createTask = (file: File) => {
     const newTask: Task = {
       id: Date.now().toString(),
-      title: taskName,
+      title: taskName || file.name.replace(/\.[^/.]+$/, ""),
       createdAt: new Date(),
-      file: selectedFile || undefined
+      file: file
     };
 
     setTasks(prev => [newTask, ...prev]);
@@ -61,56 +77,57 @@ export const StudyAssistantLibrarySection = () => {
     toast.success('任务创建成功');
   };
 
+  const handleCreateTask = () => {
+    if (!selectedFile) {
+      toast.error('请先上传文件');
+      triggerFileUpload();
+      return;
+    }
+
+    if (!taskName.trim()) {
+      toast.error('请输入任务名称');
+      return;
+    }
+
+    createTask(selectedFile);
+  };
+
   const handleDeleteTask = (taskId: string) => {
     setTasks(prev => prev.filter(task => task.id !== taskId));
     toast.success('任务已删除');
   };
 
-  const getFileIcon = (filename: string) => {
-    const ext = filename.split('.').pop()?.toLowerCase();
-    switch (ext) {
-      case 'pdf':
-        return '📄';
-      case 'doc':
-      case 'docx':
-        return '📝';
-      case 'txt':
-        return '📃';
-      default:
-        return '📄';
-    }
+  const handleStartEdit = (task: Task) => {
+    setEditingTaskId(task.id);
+    setEditingTaskName(task.title);
   };
 
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
+  const handleFinishEdit = () => {
+    if (!editingTaskId || !editingTaskName.trim()) return;
+    
+    setTasks(prev => prev.map(task => 
+      task.id === editingTaskId 
+        ? { ...task, title: editingTaskName.trim() }
+        : task
+    ));
+    setEditingTaskId(null);
+    setEditingTaskName('');
+    toast.success('任务名称已更新');
+  };
+
+  const handleCancelEdit = () => {
+    setEditingTaskId(null);
+    setEditingTaskName('');
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50/50 p-8">
-      {/* Header */}
-      <div className="max-w-[1200px] mx-auto flex items-center mb-8">
-        <div className="flex items-center gap-2">
-          <div className="text-blue-600 text-2xl">✦</div>
-          <span className="font-medium">智能学习助手</span>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <Card className="max-w-[1200px] mx-auto p-16 min-h-[800px]">
-        <div className="grid grid-cols-[1fr,1fr] gap-16">
-          {/* Left Content */}
-          <div className="flex flex-col justify-start">
-            <h1 className="text-4xl font-medium text-blue-600 mb-12">
-              欢迎来到智能学习助手！
-            </h1>
-            <div 
-              {...getRootProps()}
-              className="relative mb-8"
-            >
+    <Card className="p-16 min-h-[600px]">
+      <div className="flex flex-col max-w-[1600px] mx-auto w-full">
+        <h1 className="text-4xl font-bold mb-16 bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">欢迎来到智能学习助手</h1>
+        <div className="flex gap-16">
+          <div className="w-[800px]">
+            <h2 className="text-xl font-medium mb-4">开始创建你的学习任务</h2>
+            <div {...getRootProps()} className="relative mb-8">
               <input {...getInputProps()} />
               <div className={cn(
                 "absolute inset-0 rounded-lg border-2 border-dashed pointer-events-none transition-colors",
@@ -133,20 +150,7 @@ export const StudyAssistantLibrarySection = () => {
                     className="h-10 w-10"
                     onClick={(e) => {
                       e.stopPropagation();
-                      const input = document.createElement('input');
-                      input.type = 'file';
-                      input.accept = '.pdf,.doc,.docx,.txt';
-                      input.onchange = (e) => {
-                        const file = (e.target as HTMLInputElement).files?.[0];
-                        if (file) {
-                          setSelectedFile(file);
-                          if (!taskName) {
-                            setTaskName(file.name.replace(/\.[^/.]+$/, ""));
-                          }
-                          toast.success(`已选择文件: ${file.name}`);
-                        }
-                      };
-                      input.click();
+                      triggerFileUpload();
                     }}
                   >
                     <Upload className="h-4 w-4 text-neutral-3" />
@@ -163,20 +167,19 @@ export const StudyAssistantLibrarySection = () => {
                 </div>
               </div>
 
-              {/* Selected File Display */}
               {selectedFile && (
                 <div className="mt-2 p-3 bg-neutral-7/30 rounded-lg">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="text-xl">
-                        {getFileIcon(selectedFile.name)}
+                      <div className="text-xs text-neutral-3">
+                        {selectedFile.name.split('.').pop()?.toUpperCase()}
                       </div>
                       <div>
                         <div className="text-sm font-medium text-neutral-1">
                           {selectedFile.name}
                         </div>
                         <div className="text-xs text-neutral-3">
-                          {formatFileSize(selectedFile.size)}
+                          {(selectedFile.size / 1024).toFixed(1)} KB
                         </div>
                       </div>
                     </div>
@@ -196,36 +199,68 @@ export const StudyAssistantLibrarySection = () => {
               )}
             </div>
 
-            {/* Task List */}
             {tasks.length > 0 ? (
-              <div className="grid grid-cols-3 gap-4">
+              <div className="flex flex-wrap gap-6">
                 {tasks.map(task => (
                   <div 
                     key={task.id} 
-                    className="aspect-square p-4 bg-gradient-to-br from-blue-100 to-blue-50 rounded-2xl relative group"
+                    className="w-[240px] h-[240px] p-6 bg-gradient-to-br from-blue-200 to-blue-50/50 rounded-lg relative group hover:shadow-lg transition-all duration-300"
                   >
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="absolute top-3 right-3 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white/50 hover:text-red-500"
-                      onClick={() => handleDeleteTask(task.id)}
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </Button>
+                    {editingTaskId !== task.id && (
+                      <div className="absolute top-0 right-0 p-3 flex gap-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 hover:bg-white/50 hover:text-blue-500 p-1.5 text-neutral-3"
+                          onClick={() => handleStartEdit(task)}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 hover:bg-white/50 hover:text-red-500 p-1.5 text-neutral-3"
+                          onClick={() => handleDeleteTask(task.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    )}
                     <div className="flex flex-col h-full">
-                      <div className="text-xl mb-2">
-                        {task.file ? getFileIcon(task.file.name) : '📝'}
+                      <div>
+                        {editingTaskId === task.id ? (
+                          <div className="flex gap-2">
+                            <Input
+                              type="text"
+                              value={editingTaskName}
+                              onChange={(e) => setEditingTaskName(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  handleFinishEdit();
+                                } else if (e.key === 'Escape') {
+                                  handleCancelEdit();
+                                }
+                              }}
+                              className="h-8 text-sm bg-white rounded-2"
+                              autoFocus
+                            />
+                          </div>
+                        ) : (
+                          <div className="text-base font-medium text-neutral-1">
+                            {task.title}
+                          </div>
+                        )}
+                        {task.file && (
+                          <div className="text-xs text-neutral-3 mt-1">
+                            {task.file.name}
+                          </div>
+                        )}
                       </div>
-                      <div className="flex-grow">
-                        <div className="text-sm font-medium text-neutral-1 mb-1 line-clamp-2">
-                          {task.title}
-                        </div>
-                      </div>
-                      <div className="text-xs text-neutral-3">
+                      <div className="flex-grow" />
+                      <div className="text-sm text-neutral-3/75">
                         {new Intl.DateTimeFormat('zh-CN', {
-                          year: 'numeric',
-                          month: '2-digit',
-                          day: '2-digit'
+                          month: 'short',
+                          day: 'numeric'
                         }).format(task.createdAt)}
                       </div>
                     </div>
@@ -233,32 +268,22 @@ export const StudyAssistantLibrarySection = () => {
                 ))}
               </div>
             ) : (
-              <div className="text-center text-neutral-3 py-8">
-                还没有任务，创建一个新任务开始学习吧！
+              <div className="text-left text-neutral-3 py-8">
+                快来创建你的第一个学习任务，开启智能学习之旅吧！
               </div>
             )}
           </div>
-
-          {/* Right Illustration */}
-          <div className="relative">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px]">
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
-                <span className="text-white text-2xl">🤖</span>
-              </div>
-              <div className="absolute top-1/4 right-0 max-w-[200px] p-4 bg-blue-600 text-white rounded-lg">
-                你好！我是你的学习助手
-              </div>
-              <div className="absolute bottom-1/4 left-0 max-w-[200px] p-4 bg-pink-500 text-white rounded-lg">
-                让我们开始学习吧！
-              </div>
-              <div className="absolute bottom-0 right-1/2 translate-x-1/2 w-16 h-16 bg-pink-500 rounded-full flex items-center justify-center">
-                <span className="text-white text-2xl">👩‍🎓</span>
-              </div>
-              <div className="absolute inset-0 border-2 border-dashed border-neutral-200 rounded-full animate-spin-slow" />
+          <div className="flex-1 relative">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[400px] rounded-xl overflow-hidden">
+              <img
+                src={libImage}
+                alt="Study Illustration"
+                className="w-full h-full object-contain"
+              />
             </div>
           </div>
         </div>
-      </Card>
-    </div>
+      </div>
+    </Card>
   );
 };
