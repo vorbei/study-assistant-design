@@ -41,7 +41,7 @@ export const LoginSection = () => {
           <div className="flex-1 p-12 flex flex-col justify-center relative">
             <div className="mb-8">
               <h1 className="text-4xl font-bold text-neutral-0 mb-4">欢迎使用智能学习助手</h1>
-              <h2 className="text-3xl font-bold text-blue-7 mb-4">为您提供智能化的学习解决方案</h2>
+              <h2 className="text-3xl font-bold text-blue-0 mb-4">为您提供智能化的学习解决方案</h2>
             </div>
             <div className="relative h-[300px]">
             </div>

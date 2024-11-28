@@ -10,7 +10,6 @@ export function Nav({ className, currentPath = '#design', ...props }: NavProps) 
   const navItems = [
     { href: '#design', label: '设计规范' },
     { href: '#components', label: 'UI组件' },
-    { href: '#icons', label: '图标' },
     { href: '#examples', label: '示例界面' }
   ];
 

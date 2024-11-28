@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { DesignPage } from "./pages/design";
 import { ComponentsPage } from "./pages/components";
-import { IconsPage } from "./pages/icons";
 import { ExamplesPage } from "./pages/examples";
 import { Toaster } from "@/components/ui/toaster";
 import { Nav } from "@/components/ui/nav";
@@ -31,8 +30,6 @@ export default function App() {
         return <DesignPage />;
       case '#components':
         return <ComponentsPage />;
-      case '#icons':
-        return <IconsPage />;
       case '#examples':
         return <ExamplesPage />;
       default:

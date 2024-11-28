@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Sidebar } from "@/components/layout/Sidebar";
 import { LoginSection } from "@/components/sections/examples/LoginSection";
-import { ChatSection } from "@/components/sections/examples/ChatSection";
-import { LearningAssistantSection } from "@/components/sections/examples/LearningAssistantSection";
 import { ExamSection } from "@/components/sections/examples/ExamSection";
 
 const sections = [
@@ -11,18 +9,6 @@ const sections = [
     name: "登录界面",
     href: "#examples/login",
     description: "展示各种登录、注册、找回密码等用户认证界面"
-  },
-  {
-    id: "chat",
-    name: "对话界面",
-    href: "#examples/chat",
-    description: "展示聊天、对话、消息等交互界面"
-  },
-  {
-    id: "learningAssistant",
-    name: "LearningAssistant界面",
-    href: "#examples/learningAssistant",
-    description: "展示学习助手等界面"
   },
   {
     id: "exam",
@@ -82,24 +68,10 @@ export const ExamplesPage = () => {
                 <LoginSection />
               </div>
             )}
-            {activeSection === 'chat' && (
-              <div className="rounded-lg p-6">
-                <h2 className="text-lg font-medium mb-2">对话界面</h2>
-                <p className="text-sm text-neutral-11 mb-6">{sections[1].description}</p>
-                <ChatSection />
-              </div>
-            )}
-            {activeSection === 'learningAssistant' && (
-              <div className="rounded-lg p-6">
-                <h2 className="text-lg font-medium mb-2">LearningAssistant界面</h2>
-                <p className="text-sm text-neutral-11 mb-6">{sections[2].description}</p>
-                <LearningAssistantSection />
-              </div>
-            )}
             {activeSection === 'exam' && (
               <div className="rounded-lg p-6">
                 <h2 className="text-lg font-medium mb-2">模拟考试</h2>
-                <p className="text-sm text-neutral-11 mb-6">{sections[3].description}</p>
+                <p className="text-sm text-neutral-11 mb-6">{sections[1].description}</p>
                 <ExamSection />
               </div>
             )}
