@@ -13,10 +13,10 @@ import {
 
 interface StudyAssistantNavProps {
   className?: string;
-  projectName: string;
-  fileName: string;
-  mode: 'study' | 'exam';
-  onModeChange: (mode: 'study' | 'exam') => void;
+  projectName?: string;
+  fileName?: string;
+  mode?: 'study' | 'exam';
+  onModeChange?: (mode: 'study' | 'exam') => void;
   onBackToAllTasks?: () => void;
   userAvatar?: string;
   userName?: string;
@@ -37,9 +37,11 @@ export const StudyAssistantNav: React.FC<StudyAssistantNavProps> = ({
   userName = "用户",
   onLogout,
   onSettings,
-  createdAt = new Date(),
+  createdAt,
   fileSize,
 }) => {
+  const hasProject = Boolean(projectName && fileName);
+
   return (
     <nav className={cn("h-14 px-6 border-b bg-white", className)}>
       <div className="h-full flex items-center justify-between">
@@ -53,107 +55,109 @@ export const StudyAssistantNav: React.FC<StudyAssistantNavProps> = ({
             <span className="text-lg font-medium">智能学习助手</span>
           </div>
 
+          {hasProject && (
+            <>
+              {/* 返回按钮 */}
+              <button
+                onClick={onBackToAllTasks}
+                className="flex items-center gap-1.5 text-sm text-neutral-3 hover:text-neutral-1"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                返回
+              </button>
 
-          {/* 返回按钮 */}
-          <button
-            onClick={onBackToAllTasks}
-            className="flex items-center gap-1.5 text-sm text-neutral-3 hover:text-neutral-1"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            返回
-          </button>
+              {/* 分隔线 */}
+              <div className="w-px h-8 bg-neutral-5" />
 
-          {/* 分隔线 */}
-          <div className="w-px h-8 bg-neutral-5" />
-
-          {/* 项目信息 */}
-          <div className="flex flex-col">
-            <h2 className="text-base font-medium leading-tight">{projectName}</h2>
-            <div className="flex items-center gap-2 mt-0.5 text-xs text-neutral-3">
-              <FileText className="h-3.5 w-3.5" />
-              <span>{fileName}</span>
-              {createdAt && (
-                <>
-                  <span>•</span>
-                  <span>{new Intl.DateTimeFormat('zh-CN', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  }).format(createdAt)}</span>
-                </>
-              )}
-              {fileSize && (
-                <>
-                  <span>•</span>
-                  <span>{(fileSize / 1024).toFixed(1)} KB</span>
-                </>
-              )}
-            </div>
-          </div>
-
-
-          {/* 功能切换 */}
-          <div className="flex items-center gap-8 ml-16">
-            <button
-              onClick={() => onModeChange('study')}
-              className={cn(
-                "relative px-4 py-2 text-sm transition-colors",
-                mode === 'study' ? "text-blue-600" : "text-neutral-3 hover:text-neutral-1"
-              )}
-            >
-              <div className="flex items-center gap-2">
-                <FileText className="h-4 w-4" />
-                自学助手
+              {/* 项目信息 */}
+              <div className="flex flex-col">
+                <h2 className="text-base font-medium leading-tight">{projectName}</h2>
+                <div className="flex items-center gap-1 mt-0.5 text-xs text-neutral-3">
+                  <FileText className="h-3 w-3" />
+                  <span>{fileName}</span>
+                  {createdAt && (
+                    <>
+                      <span>•</span>
+                      <span>{new Intl.DateTimeFormat('zh-CN', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      }).format(createdAt)}</span>
+                    </>
+                  )}
+                  {fileSize && (
+                    <>
+                      <span>•</span>
+                      <span>{(fileSize / 1024).toFixed(1)} KB</span>
+                    </>
+                  )}
+                </div>
               </div>
-              {mode === 'study' && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
-              )}
-            </button>
-            <button
-              onClick={() => onModeChange('exam')}
-              className={cn(
-                "relative px-4 py-2 text-sm transition-colors",
-                mode === 'exam' ? "text-blue-600" : "text-neutral-3 hover:text-neutral-1"
-              )}
-            >
-              <div className="flex items-center gap-2">
-                <GraduationCap className="h-4 w-4" />
-                模拟考试
+
+              {/* 功能切换 */}
+              <div className="flex items-center gap-8 ml-16">
+                <button
+                  onClick={() => onModeChange?.('study')}
+                  className={cn(
+                    "relative px-4 py-2 text-sm transition-colors",
+                    mode === 'study' ? "text-blue-600" : "text-neutral-3 hover:text-neutral-1"
+                  )}
+                >
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-4 w-4" />
+                    学习模式
+                  </div>
+                  {mode === 'study' && (
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-full" />
+                  )}
+                </button>
+                <button
+                  onClick={() => onModeChange?.('exam')}
+                  className={cn(
+                    "relative px-4 py-2 text-sm transition-colors",
+                    mode === 'exam' ? "text-blue-600" : "text-neutral-3 hover:text-neutral-1"
+                  )}
+                >
+                  <div className="flex items-center gap-2">
+                    <GraduationCap className="h-4 w-4" />
+                    考试模式
+                  </div>
+                  {mode === 'exam' && (
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-full" />
+                  )}
+                </button>
               </div>
-              {mode === 'exam' && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
-              )}
-            </button>
-          </div>
+            </>
+          )}
         </div>
 
-        {/* 右侧：用户账户 */}
-        <div className="flex items-center">
-          <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-2 outline-none hover:bg-neutral-7/50 px-2 py-1.5 rounded-md transition-colors">
-              <Avatar className="h-8 w-8">
+        {/* 右侧用户信息 */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="flex items-center gap-2 hover:bg-neutral-7/50 p-1.5 rounded-lg transition-colors">
+              <Avatar className="h-7 w-7">
                 <AvatarImage src={userAvatar} />
                 <AvatarFallback>
                   <User className="h-4 w-4" />
                 </AvatarFallback>
               </Avatar>
-              <span className="text-sm font-medium">{userName}</span>
+              <span className="text-sm">{userName}</span>
               <ChevronDown className="h-4 w-4 text-neutral-3" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-[200px]">
-              <DropdownMenuLabel>账户设置</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={onSettings}>
-                <Settings className="mr-2 h-4 w-4" />
-                <span>个人设置</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={onLogout} className="text-red-500">
-                <LogOut className="mr-2 h-4 w-4" />
-                <span>退出登录</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuLabel>我的账户</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={onSettings}>
+              <Settings className="mr-2 h-4 w-4" />
+              <span>设置</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={onLogout}>
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>退出登录</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </nav>
   );
