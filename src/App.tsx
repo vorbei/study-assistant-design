@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { DesignPage } from "./pages/design";
 import { ComponentsPage } from "./pages/components";
+import { MobileComponentsPage } from "./pages/mobile-components";
 import { Toaster } from "@/components/ui/toaster";
 import { Nav } from "@/components/ui/nav";
 
@@ -29,6 +30,8 @@ export default function App() {
         return <DesignPage />;
       case '#components':
         return <ComponentsPage />;
+      case '#mobile-components':
+        return <MobileComponentsPage />;
       default:
         return <DesignPage />;
     }
