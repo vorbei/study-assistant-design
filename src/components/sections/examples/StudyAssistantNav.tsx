@@ -49,8 +49,8 @@ export const StudyAssistantNav: React.FC<StudyAssistantNavProps> = ({
         <div className="flex items-center gap-4">
           {/* Logo和系统名称 */}
           <div className="flex items-center gap-2">
-            <div className="flex items-center justify-center w-8 h-8 rounded-md bg-blue-600 text-white">
-              <Star className="w-5 h-5" />
+            <div className="flex items-center justify-center w-10 h-10 rounded-md text-white">
+              <img src="/src/assets/assistant.svg" alt="Assistant" className="w-10 h-10" />
             </div>
             <span className="text-lg font-medium">智能学习助手</span>
           </div>
