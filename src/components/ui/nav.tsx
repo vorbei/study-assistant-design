@@ -9,7 +9,7 @@ interface NavProps extends React.HTMLAttributes<HTMLElement> {
 export function Nav({ className, currentPath = '#design', ...props }: NavProps) {
   const navItems = [
     { href: '#design', label: '设计规范' },
-    { href: '#components', label: 'UI组件' }
+    { href: '#components', label: '桌面UI组件' }
   ];
 
   return (
