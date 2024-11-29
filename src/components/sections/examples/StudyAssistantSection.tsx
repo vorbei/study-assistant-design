@@ -14,7 +14,7 @@ export const StudyAssistantSection = () => {
   return (
     <div className="flex flex-col min-h-screen bg-neutral-7">
       <StudyAssistantNav
-        projectName="智能学习助手"
+        projectName="项目名称"
         fileName="自然语言处理.pdf"
         mode={mode}
         onModeChange={setMode}
