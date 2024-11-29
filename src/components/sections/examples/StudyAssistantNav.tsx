@@ -108,7 +108,7 @@ export const StudyAssistantNav: React.FC<StudyAssistantNavProps> = ({
                     学习模式
                   </div>
                   {mode === 'study' && (
-                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-full" />
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
                   )}
                 </button>
                 <button
@@ -123,7 +123,7 @@ export const StudyAssistantNav: React.FC<StudyAssistantNavProps> = ({
                     考试模式
                   </div>
                   {mode === 'exam' && (
-                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-full" />
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
                   )}
                 </button>
               </div>
