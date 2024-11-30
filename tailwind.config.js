@@ -22,6 +22,7 @@ export default {
       sm: '2px',
       md: '4px',
       lg: '8px',
+      xl: '12px',
       full: '50%',
     },
     container: {

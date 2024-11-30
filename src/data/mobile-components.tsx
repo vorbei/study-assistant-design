@@ -19,8 +19,8 @@ const mobileStyles = {
   select: "h-9 text-sm rounded-lg",
   badge: "rounded-lg",
   card: "rounded-lg",
-  radio: "rounded-lg",
-  checkbox: "rounded-lg",
+  radio: "h-5 w-5 rounded-[12px]",
+  checkbox: "h-5 w-5 rounded-[12px]",
   switch: "",
 }
 
@@ -118,13 +118,15 @@ export const mobileComponents = [
     href: '#mobile-components/radio',
     component: () => (
       <RadioGroup defaultValue="option-one">
-        <div className="flex items-center space-x-2">
-          <RadioGroupItem className={mobileStyles.radio} value="option-one" id="option-one" />
-          <Label htmlFor="option-one">选项一</Label>
-        </div>
-        <div className="flex items-center space-x-2">
-          <RadioGroupItem className={mobileStyles.radio} value="option-two" id="option-two" />
-          <Label htmlFor="option-two">选项二</Label>
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="option-one" id="option-one" className={mobileStyles.radio} />
+            <Label htmlFor="option-one">选项一</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="option-two" id="option-two" className={mobileStyles.radio} />
+            <Label htmlFor="option-two">选项二</Label>
+          </div>
         </div>
       </RadioGroup>
     ),
@@ -134,13 +136,13 @@ export const mobileComponents = [
     title: 'Checkbox 多选框',
     href: '#mobile-components/checkbox',
     component: () => (
-      <div className="flex flex-col space-y-4">
+      <div className="flex flex-col gap-2">
         <div className="flex items-center space-x-2">
-          <Checkbox className={mobileStyles.checkbox} id="terms" />
+          <Checkbox id="terms" className={mobileStyles.checkbox} />
           <Label htmlFor="terms">接受服务条款</Label>
         </div>
         <div className="flex items-center space-x-2">
-          <Checkbox className={mobileStyles.checkbox} id="newsletter" />
+          <Checkbox id="newsletter" className={mobileStyles.checkbox} />
           <Label htmlFor="newsletter">订阅新闻</Label>
         </div>
       </div>
