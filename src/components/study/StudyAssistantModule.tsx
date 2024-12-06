@@ -25,6 +25,7 @@ interface StudyChat {
   lastMessage: string;
   timestamp: string;
   isActive?: boolean;
+  isPinned?: boolean;
   messages: Message[];
 }
 
@@ -32,6 +33,7 @@ interface ChatListItemProps {
   chat: StudyChat;
   onClick: () => void;
   onDelete: () => void;
+  onTogglePin: () => void;
 }
 
 interface StudyAssistantModuleProps {
@@ -63,6 +65,7 @@ export const StudyAssistantModule: React.FC<StudyAssistantModuleProps> = ({
   const [input, setInput] = useState('');
   const [currentPdfUrl] = useState(testPdf);
   const [isListCollapsed, setIsListCollapsed] = useState(true);
+  const [chats, setChats] = useState(initialChats);
   const { toast } = useToast();
 
   const handleChatClick = (chat: StudyChat) => {
@@ -70,10 +73,11 @@ export const StudyAssistantModule: React.FC<StudyAssistantModuleProps> = ({
   };
 
   const handleDeleteChat = (chatId: string) => {
-    const updatedChats = initialChats.filter(chat => chat.id !== chatId);
+    const updatedChats = chats.filter(chat => chat.id !== chatId);
     if (activeChat?.id === chatId) {
       setActiveChat(updatedChats[0] || null);
     }
+    setChats(updatedChats);
     toast({
       description: "对话已删除",
     });
@@ -138,6 +142,24 @@ export const StudyAssistantModule: React.FC<StudyAssistantModuleProps> = ({
     }
   };
 
+  const handleTogglePin = (chatId: string) => {
+    setChats(prev => prev.map(chat => {
+      if (chat.id === chatId) {
+        return { ...chat, isPinned: !chat.isPinned };
+      }
+      return chat;
+    }).sort((a, b) => {
+      // Sort by pin status first, then by timestamp
+      if (a.isPinned && !b.isPinned) return -1;
+      if (!a.isPinned && b.isPinned) return 1;
+      return 0; // Keep original order for same pin status
+    }));
+    
+    toast({
+      description: `聊天已${chats.find(c => c.id === chatId)?.isPinned ? '取消置顶' : '置顶'}`,
+    });
+  };
+
   return (
     <div className={cn("w-full h-full p-4", className)}>
       <div className="w-full h-[800px] grid grid-cols-[1fr,24px,600px] gap-0">
@@ -196,7 +218,7 @@ export const StudyAssistantModule: React.FC<StudyAssistantModuleProps> = ({
                   <h3 className="text-sm font-medium text-muted-foreground">学习记录</h3>
                 </div>
                 <div className="flex-1 overflow-y-auto">
-                  {initialChats.map((chat) => (
+                  {chats.map((chat) => (
                     <ChatListItem
                       key={chat.id}
                       chat={{
@@ -205,6 +227,7 @@ export const StudyAssistantModule: React.FC<StudyAssistantModuleProps> = ({
                       }}
                       onClick={() => handleChatClick(chat)}
                       onDelete={() => handleDeleteChat(chat.id)}
+                      onTogglePin={() => handleTogglePin(chat.id)}
                     />
                   ))}
                 </div>
