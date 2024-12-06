@@ -23,6 +23,7 @@ interface Chat {
   title: string;
   messages: Message[];
   createdAt: Date;
+  isPinned?: boolean;
 }
 
 export interface ExamModuleProps {
@@ -98,6 +99,24 @@ export const ExamModule: React.FC<ExamModuleProps> = ({
     // 可以添加逻辑来预填充当前考试的设置
   };
 
+  const handleTogglePin = (chatId: string) => {
+    setChats(prev => prev.map(chat => {
+      if (chat.id === chatId) {
+        return { ...chat, isPinned: !chat.isPinned };
+      }
+      return chat;
+    }).sort((a, b) => {
+      // Sort by pin status first, then by date
+      if (a.isPinned && !b.isPinned) return -1;
+      if (!a.isPinned && b.isPinned) return 1;
+      return b.createdAt.getTime() - a.createdAt.getTime();
+    }));
+    
+    toast({
+      description: `考试已${chats.find(c => c.id === chatId)?.isPinned ? '取消置顶' : '置顶'}`,
+    });
+  };
+
   return (
     <div className={cn("w-full h-full p-4", className)}>
       <Card className="w-full h-[800px] grid grid-cols-[320px,1fr] overflow-hidden">
@@ -122,6 +141,7 @@ export const ExamModule: React.FC<ExamModuleProps> = ({
                 onClick={() => handleChatClick(chat)}
                 onDelete={() => handleDeleteChat(chat.id)}
                 onSettings={() => handleSettings(chat.id)}
+                onTogglePin={() => handleTogglePin(chat.id)}
               />
             ))}
           </div>

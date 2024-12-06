@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { Trash2, Settings } from 'lucide-react';
+import { Trash2, Settings, Pin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
@@ -9,6 +9,7 @@ interface Chat {
   id: string;
   title: string;
   createdAt: Date;
+  isPinned?: boolean;
 }
 
 interface ExamListItemProps {
@@ -17,6 +18,7 @@ interface ExamListItemProps {
   onClick: () => void;
   onDelete: () => void;
   onSettings?: () => void;
+  onTogglePin?: () => void;
 }
 
 export const ExamListItem: React.FC<ExamListItemProps> = ({
@@ -25,6 +27,7 @@ export const ExamListItem: React.FC<ExamListItemProps> = ({
   onClick,
   onDelete,
   onSettings,
+  onTogglePin,
 }) => {
   const [showActions, setShowActions] = useState(false);
 
@@ -39,7 +42,12 @@ export const ExamListItem: React.FC<ExamListItemProps> = ({
       onMouseLeave={() => setShowActions(false)}
     >
       <div className="flex items-center justify-between mb-1">
-        <h4 className="font-medium text-sm">{chat.title}</h4>
+        <div className="flex items-center gap-2">
+          <h4 className="font-medium text-sm">{chat.title}</h4>
+          {chat.isPinned && (
+            <span className="text-xs text-neutral-3">置顶</span>
+          )}
+        </div>
         <span className="text-xs text-muted-foreground">
           {format(chat.createdAt, 'HH:mm', { locale: zhCN })}
         </span>
@@ -53,24 +61,35 @@ export const ExamListItem: React.FC<ExamListItemProps> = ({
           <Button
             variant="ghost"
             size="icon"
-            className="h-6 w-6"
+            className="h-6 w-6 text-neutral-3 hover:text-blue-3 transition-colors"
+            onClick={(e) => {
+              e.stopPropagation();
+              onTogglePin?.();
+            }}
+          >
+            <Pin className={cn("h-4 w-4", chat.isPinned && "fill-current")} />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6 text-neutral-3 hover:text-blue-3 transition-colors"
             onClick={(e) => {
               e.stopPropagation();
               onSettings?.();
             }}
           >
-            <Settings className="h-4 w-4 text-neutral-11" />
+            <Settings className="h-4 w-4" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
-            className="h-6 w-6"
+            className="h-6 w-6 text-neutral-3 hover:text-blue-3 transition-colors"
             onClick={(e) => {
               e.stopPropagation();
               onDelete();
             }}
           >
-            <Trash2 className="h-4 w-4 text-red-500" />
+            <Trash2 className="h-4 w-4" />
           </Button>
         </div>
       )}
